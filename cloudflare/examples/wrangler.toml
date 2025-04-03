@@ -1,0 +1,16 @@
+name = "stagehand-examples"
+main = "src/example.ts"
+workers_dev = true
+compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2025-03-05"
+upload_source_maps = true
+
+[browser]
+binding = "BROWSER"
+
+[ai]
+binding = "AI"
+
+[assets]
+binding = "ASSETS"
+directory = "./public"
