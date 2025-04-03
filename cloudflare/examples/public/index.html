@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub Last Commit Viewer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f4f4f9;
+      }
+      .container {
+        text-align: center;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      input[type="text"] {
+        width: 80%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+      .result {
+        margin-top: 20px;
+      }
+      .loading img {
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>GitHub Last Commit Viewer</h1>
+      <input
+        type="text"
+        id="github-url"
+        placeholder="Enter GitHub repository URL"
+        value="https://github.com/cloudflare/playwright"
+      />
+      <button id="fetch-button">Fetch Last Commit</button>
+      <div class="result" id="result"></div>
+    </div>
+    <script>
+      const fetchButton = document.getElementById("fetch-button");
+      const githubUrlInput = document.getElementById("github-url");
+      const resultDiv = document.getElementById("result");
+
+      fetchButton.addEventListener("click", async () => {
+        const url = githubUrlInput.value.trim();
+        if (!url) {
+          resultDiv.innerHTML =
+            '<p style="color: red;">Please enter a valid GitHub URL.</p>';
+          return;
+        }
+
+        resultDiv.innerHTML = `
+          <div class="loading">
+            <img src="loading.gif" alt="Loading" />
+          </div>
+        `;
+        fetchButton.disabled = true;
+
+        try {
+          const response = await fetch(
+            `/api/last-commit?url=${encodeURIComponent(url)}`,
+            {
+              method: "GET",
+            },
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch last commit.");
+          }
+
+          const { author, title } = await response.json();
+          resultDiv.innerHTML = `
+            <p>The latest commit details are:</p>
+            <p><strong>Author:</strong> ${author}</p>
+            <p><strong>Title:</strong> ${title}</p>
+          `;
+        } catch (error) {
+          resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        } finally {
+          fetchButton.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
