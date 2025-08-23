@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "paths": {
+      "*": ["node_modules/*", "lib/types/*"],
+      "@/*": ["./*"],
+      "@/dist": ["../types/stagehand"],
+      "playwright": ["@cloudflare/playwright"],
+      "@playwright/test": ["@cloudflare/playwright/test"],
+      "@browserbasehq/stagehand": ["../types/stagehand"],
+    },
+  },
+  "include": ["../lib", "../types"],
+  "exclude": ["node_modules", ".eslintrc.cjs", "vite.config.ts"]
+}
