@@ -1,0 +1,31 @@
+name: Cloudflare - Continuous Release
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: |
+          cd cloudflare
+          npm ci
+
+      - name: Build Cloudflare Stagehand
+        run: |
+          cd cloudflare
+          npm run build
+      
+      - name: Publish to pkg-pr-new
+        run: |
+          cd cloudflare
+          npx pkg-pr-new publish
